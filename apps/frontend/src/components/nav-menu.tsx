@@ -2,11 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/auth.context';
 import styles from './nav-menu.module.css';
 
 export function NavMenu() {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const { user, logout } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (!open) return;
@@ -28,6 +32,12 @@ export function NavMenu() {
     };
   }, [open]);
 
+  const handleLogout = () => {
+    setOpen(false);
+    logout();
+    router.replace('/login');
+  };
+
   return (
     <div className={styles.root} ref={rootRef}>
       <button
@@ -47,6 +57,16 @@ export function NavMenu() {
 
       {open && (
         <div className={styles.menu} role="menu">
+          {user && (
+            <>
+              <div className={styles.userInfo}>
+                <span className={styles.userName}>{user.name}</span>
+                <span className={styles.userEmail}>{user.email}</span>
+              </div>
+              <div className={styles.divider} />
+            </>
+          )}
+
           <Link href="/" className={styles.item} onClick={() => setOpen(false)}>
             Home
           </Link>
@@ -70,6 +90,15 @@ export function NavMenu() {
           >
             LinkedIn
           </a>
+
+          {user && (
+            <>
+              <div className={styles.divider} />
+              <button type="button" className={styles.item} onClick={handleLogout}>
+                Log out
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>

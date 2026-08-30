@@ -5,6 +5,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { NavMenu } from '@/components/nav-menu';
+import { AuthGuard } from '@/components/auth-guard';
 import styles from './admin.module.css';
 
 interface Document {
@@ -26,6 +27,14 @@ interface Analytics {
 }
 
 export default function AdminDashboard() {
+  return (
+    <AuthGuard>
+      <AdminDashboardContent />
+    </AuthGuard>
+  );
+}
+
+function AdminDashboardContent() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);

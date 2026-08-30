@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '@/context/auth.context';
 import styles from './compose-modal.module.css';
 
 interface ComposeModalProps {
@@ -13,6 +14,7 @@ const AUTHOR_STORAGE_KEY = 'composeAuthorName';
 const ROLE_STORAGE_KEY = 'composeAuthorRole';
 
 export function ComposeModal({ onClose, onCreated }: ComposeModalProps) {
+  const { user } = useAuth();
   const [type, setType] = useState<'article' | 'discussion'>('discussion');
   const [author, setAuthor] = useState('');
   const [role, setRole] = useState('');
@@ -25,10 +27,10 @@ export function ComposeModal({ onClose, onCreated }: ComposeModalProps) {
 
   useEffect(() => {
     try {
-      setAuthor(localStorage.getItem(AUTHOR_STORAGE_KEY) || '');
+      setAuthor(user?.name || localStorage.getItem(AUTHOR_STORAGE_KEY) || '');
       setRole(localStorage.getItem(ROLE_STORAGE_KEY) || '');
     } catch {
-      // ignore
+      setAuthor(user?.name || '');
     }
 
     const onKeyDown = (e: KeyboardEvent) => {

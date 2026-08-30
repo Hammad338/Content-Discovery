@@ -6,21 +6,27 @@ A full-stack application for intelligent content search powered by AI. Built wit
 
 - **RAG Pipeline**: Retrieval Augmented Generation with Claude AI
 - **Semantic Search**: Find relevant content using AI understanding
+- **Authentication**: Email/password signup and login, JWT-based sessions
+- **Blog-Style Feed**: Articles and community discussions with category
+  filtering, a sidebar (headlines, categories, newsletter), and a compose
+  flow for publishing new posts
+- **Admin Dashboard**: Manage ingested documents, view analytics
 - **Full-Stack TypeScript**: Type-safe frontend and backend
-- **Beautiful UI**: Modern, responsive design
+- **Dark/Light Theme**: Persisted per browser
 - **Claude API Integration**: Optional integration for enhanced answers
-- **In-Memory Storage**: Fast, zero-database setup (perfect for prototyping)
 
 ## 📋 Tech Stack
 
 ### Backend
 - NestJS 10.x
+- PostgreSQL + TypeORM (users, document metadata)
+- JWT auth with bcrypt password hashing
 - Node.js 18+
 - TypeScript 5.x
 - Axios (HTTP client)
 
 ### Frontend
-- Next.js 14.x
+- Next.js 14.x (App Router)
 - React 18.x
 - TypeScript 5.x
 - CSS Modules
@@ -30,13 +36,15 @@ A full-stack application for intelligent content search powered by AI. Built wit
 ### Prerequisites
 - Node.js 18+
 - npm 9+
+- PostgreSQL 14+ running locally (used for user accounts and admin
+  document metadata)
 
 ### Quick Start
 
-1. **Extract the project**
+1. **Clone the project**
    ```bash
-   unzip ai-discovery-platform.zip
-   cd ai-discovery-platform
+   git clone https://github.com/Hammad338/Content-Discovery.git
+   cd Content-Discovery
    ```
 
 2. **Install dependencies**
@@ -44,14 +52,29 @@ A full-stack application for intelligent content search powered by AI. Built wit
    npm install --workspaces
    ```
 
-3. **(Optional) Add Claude API Key**
+3. **Create the database**
+   ```bash
+   createdb ai_discovery
+   ```
+   TypeORM runs with `synchronize: true` in this project, so tables
+   (`users`, `documents`) are created automatically on first boot —
+   no migrations to run.
+
+4. **Configure environment variables**
    ```bash
    cp apps/backend/.env.example apps/backend/.env
-   # Edit .env and add your Claude API key
-   # CLAUDE_API_KEY=sk-ant-...
    ```
+   Edit `apps/backend/.env` and set:
+   - `JWT_SECRET` — a long random string used to sign auth tokens
+     (generate one with `openssl rand -hex 32`). Required for auth to
+     work securely; the app falls back to an insecure dev default and
+     logs a warning if this is left unset.
+   - `CLAUDE_API_KEY` — optional, enables AI-generated answers (see
+     [Claude API Integration](#-claude-api-integration))
+   - `DB_USERNAME` / `DB_PASSWORD` / `DB_NAME` — match your local
+     Postgres setup if it differs from the defaults
 
-4. **Start Backend** (Terminal 1)
+5. **Start Backend** (Terminal 1)
    ```bash
    cd apps/backend
    npm run dev
@@ -62,7 +85,7 @@ A full-stack application for intelligent content search powered by AI. Built wit
    ✅ AI Discovery Backend running on http://localhost:3001
    ```
 
-5. **Start Frontend** (Terminal 2)
+6. **Start Frontend** (Terminal 2)
    ```bash
    cd apps/frontend
    npm run dev
@@ -74,16 +97,61 @@ A full-stack application for intelligent content search powered by AI. Built wit
    Local: http://localhost:3000
    ```
 
-6. **Load Sample Data**
+7. **Load Sample Data**
    ```bash
    curl -X POST http://localhost:3001/api/rag/ingest \
      -H "Content-Type: application/json" \
      -d @sample-data.json
    ```
 
-7. **Open Browser**
-   - Frontend: http://localhost:3000
+8. **Open Browser**
+   - Frontend: http://localhost:3000 — you'll land on `/login` first;
+     use **Sign up** to create an account, then you're in
    - Backend Health: http://localhost:3001/health
+
+## 🔐 Authentication
+
+The frontend requires a logged-in session before it lets you into the
+feed, admin dashboard, or any source page — unauthenticated visits
+redirect to `/login`. Accounts are stored in Postgres (`users` table)
+with bcrypt-hashed passwords; a successful signup or login returns a
+JWT that the frontend keeps in `localStorage` and uses to restore the
+session on reload via `GET /api/auth/me`.
+
+There's no email verification or password reset flow — this is a demo
+auth system, not production-hardened.
+
+### Sign up
+```bash
+POST http://localhost:3001/api/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "password": "at-least-6-characters"
+}
+```
+
+### Log in
+```bash
+POST http://localhost:3001/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "jane@example.com",
+  "password": "at-least-6-characters"
+}
+```
+
+Both return `{ success: true, data: { user, token } }`. Send the token
+on subsequent requests that need it as `Authorization: Bearer <token>`.
+
+### Current user
+```bash
+GET http://localhost:3001/api/auth/me
+Authorization: Bearer <token>
+```
 
 ## 📚 API Endpoints
 
@@ -197,17 +265,27 @@ ai-discovery-platform/
 │   │   ├── src/
 │   │   │   ├── main.ts         # Entry point
 │   │   │   ├── app.module.ts   # Root module
-│   │   │   ├── rag/            # RAG service & controller
+│   │   │   ├── auth/           # Signup/login, JWT, users table
+│   │   │   ├── rag/            # RAG search, ingest, feed
+│   │   │   ├── admin/          # Document management & analytics
+│   │   │   ├── database/       # TypeORM config & entities
 │   │   │   └── health/         # Health check endpoint
 │   │   ├── package.json
 │   │   ├── tsconfig.json
 │   │   └── .env.example
 │   └── frontend/                # Next.js UI
-│       ├── src/app/
-│       │   ├── page.tsx        # Main page
-│       │   ├── layout.tsx      # Root layout
-│       │   ├── page.module.css # Styles
-│       │   └── globals.css     # Global styles
+│       ├── src/
+│       │   ├── app/
+│       │   │   ├── page.tsx           # Home feed (protected)
+│       │   │   ├── login/             # Login page
+│       │   │   ├── signup/            # Signup page
+│       │   │   ├── admin/             # Admin dashboard (protected)
+│       │   │   ├── source/[id]/       # Post detail page (protected)
+│       │   │   ├── layout.tsx         # Root layout
+│       │   │   └── globals.css        # Global styles + theme tokens
+│       │   ├── components/            # PostCard, Sidebar, NavMenu,
+│       │   │                          # ComposeModal, AuthGuard, etc.
+│       │   └── context/                # Theme + Auth providers
 │       ├── package.json
 │       ├── tsconfig.json
 │       └── next.config.js
@@ -253,7 +331,7 @@ npm run dev
 - **Claude API**: https://docs.anthropic.com/
 - **TypeScript**: https://www.typescriptlang.org/docs/
 
-## 🔐 Environment Variables
+## 🔧 Environment Variables
 
 ### Backend (.env)
 ```
@@ -261,6 +339,12 @@ NODE_ENV=development
 PORT=3001
 FRONTEND_URL=http://localhost:3000
 CLAUDE_API_KEY=your_key_here (optional)
+JWT_SECRET=your_long_random_string (required for secure auth)
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=your_postgres_user
+DB_PASSWORD=
+DB_NAME=ai_discovery
 ```
 
 ## 📦 Building for Production
@@ -281,11 +365,12 @@ npm run start
 ## 🤝 Contributing
 
 Feel free to fork and extend this project! Some ideas:
-- Add database persistence (PostgreSQL)
+- Persist the RAG document store in Postgres (it's currently in-memory
+  and resets on backend restart, separate from the `users`/`documents`
+  tables)
 - Implement Redis caching
 - Add vector embeddings with Weaviate
-- Improve UI with animations
-- Add user authentication
+- Password reset / email verification for auth
 - Deploy with Docker
 
 ## 📝 License

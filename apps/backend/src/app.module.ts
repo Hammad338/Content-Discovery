@@ -5,6 +5,7 @@ import { typeOrmConfig } from './database/database.config';
 import { HealthModule } from './health/health.module';
 import { RagModule } from './rag/rag.module';
 import { AdminModule } from './admin/admin.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AdminModule } from './admin/admin.module';
     HealthModule,
     RagModule,
     AdminModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

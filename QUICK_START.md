@@ -10,7 +10,29 @@ npm install --workspaces
 
 This installs all dependencies for both backend and frontend.
 
-## Step 2: Start Backend
+## Step 2: Set Up the Database and Environment
+
+The backend uses PostgreSQL to store user accounts and admin document
+metadata. Create the database, then configure your `.env`:
+
+```bash
+createdb ai_discovery
+cp apps/backend/.env.example apps/backend/.env
+```
+
+Open `apps/backend/.env` and set a `JWT_SECRET` (used to sign login
+sessions):
+
+```bash
+# generates a random value you can paste in
+openssl rand -hex 32
+```
+
+Without a `JWT_SECRET`, the backend still runs using an insecure dev
+default and logs a warning — fine for local testing, not for anything
+real.
+
+## Step 3: Start Backend
 
 Open **Terminal 1** and run:
 
@@ -24,7 +46,7 @@ Wait for this message:
 ✅ AI Discovery Backend running on http://localhost:3001
 ```
 
-## Step 3: Start Frontend
+## Step 4: Start Frontend
 
 Open **Terminal 2** and run:
 
@@ -39,7 +61,7 @@ Wait for this message:
 Local: http://localhost:3000
 ```
 
-## Step 4: Load Sample Data
+## Step 5: Load Sample Data
 
 Open **Terminal 3** and run:
 
@@ -51,21 +73,24 @@ curl -X POST http://localhost:3001/api/rag/ingest \
 
 You should see:
 ```json
-{"success":true,"data":{"count":6,"total":6}}
+{"success":true,"data":{"count":20,"total":20}}
 ```
 
-## Step 5: Open Browser
+## Step 6: Create an Account
 
-Go to: **http://localhost:3000**
+Go to: **http://localhost:3000** — you'll land on the login page, since
+the app requires an account. Click **Sign up**, fill in your name,
+email, and a password (6+ characters), and you'll be logged straight
+in.
 
-## Step 6: Search!
+## Step 7: Search!
 
 Try searching for:
 - `machine learning`
 - `deep learning`
 - `neural networks`
-- `NLP`
-- `semantic search`
+- `agentic ai`
+- `robotics`
 - `reinforcement learning`
 
 ## 🎯 That's It!
@@ -103,5 +128,8 @@ Now answers will be powered by Claude AI!
 - Backend issues? Check `apps/backend` is running
 - Frontend not loading? Clear cache and refresh
 - No search results? Make sure you loaded sample data
+- Stuck on the login page after signing up? Check the backend
+  terminal for Postgres connection errors — the `users` table needs a
+  working database connection to save your account
 
 Enjoy! 🚀

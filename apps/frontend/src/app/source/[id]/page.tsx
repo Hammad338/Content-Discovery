@@ -7,6 +7,7 @@ import axios from 'axios';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { NavMenu } from '@/components/nav-menu';
 import { PostActions } from '@/components/post-actions';
+import { AuthGuard } from '@/components/auth-guard';
 import styles from './source.module.css';
 
 interface Source {
@@ -16,6 +17,14 @@ interface Source {
 }
 
 export default function SourcePage() {
+  return (
+    <AuthGuard>
+      <SourcePageContent />
+    </AuthGuard>
+  );
+}
+
+function SourcePageContent() {
   const params = useParams();
   const id = params?.id as string;
 

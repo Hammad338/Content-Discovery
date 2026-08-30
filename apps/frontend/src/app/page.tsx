@@ -6,6 +6,7 @@ import { PostCard, PostCardData } from '@/components/post-card';
 import { Sidebar } from '@/components/sidebar';
 import { ComposeModal } from '@/components/compose-modal';
 import { categoryLabel } from '@/components/post-card';
+import { AuthGuard } from '@/components/auth-guard';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
@@ -19,6 +20,14 @@ interface SearchResult {
 }
 
 export default function Home() {
+  return (
+    <AuthGuard>
+      <HomeContent />
+    </AuthGuard>
+  );
+}
+
+function HomeContent() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);

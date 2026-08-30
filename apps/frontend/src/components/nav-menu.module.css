@@ -42,6 +42,12 @@
   width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
   color: var(--text-primary);
   font-size: 0.9rem;
   font-weight: 500;
@@ -58,6 +64,24 @@
   height: 1px;
   background: var(--border-color);
   margin: 6px 4px;
+}
+
+.userInfo {
+  padding: 8px 12px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.userName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.userEmail {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
 }
 
 @keyframes dropIn {

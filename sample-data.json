@@ -1,0 +1,218 @@
+{
+  "documents": [
+    {
+      "content": "Machine learning is a subset of artificial intelligence that enables systems to learn from data without being explicitly programmed. It uses algorithms to identify patterns in data and make decisions based on those patterns.",
+      "metadata": {
+        "title": "Introduction to Machine Learning",
+        "author": "AI Research Team",
+        "type": "article",
+        "tags": ["machine-learning", "ai", "algorithms"],
+        "date": "2024-01-15",
+        "url": "https://en.wikipedia.org/wiki/Machine_learning"
+      }
+    },
+    {
+      "content": "Deep learning uses artificial neural networks with multiple layers to process and learn from large amounts of data automatically. It has revolutionized computer vision, natural language processing, and autonomous systems.",
+      "metadata": {
+        "title": "Deep Learning Fundamentals",
+        "author": "Neural Network Experts",
+        "type": "article",
+        "tags": ["deep-learning", "neural-networks", "ai"],
+        "date": "2024-01-20",
+        "url": "https://en.wikipedia.org/wiki/Deep_learning"
+      }
+    },
+    {
+      "content": "Natural language processing (NLP) enables computers to understand, interpret, and generate human language in a meaningful and useful way. Applications include machine translation, sentiment analysis, chatbots, and question answering systems.",
+      "metadata": {
+        "title": "Natural Language Processing Guide",
+        "author": "Language AI Team",
+        "type": "article",
+        "tags": ["nlp", "natural-language", "text-processing"],
+        "date": "2024-02-01",
+        "url": "https://en.wikipedia.org/wiki/Natural_language_processing"
+      }
+    },
+    {
+      "content": "Neural networks are computing systems inspired by biological neural networks. They consist of interconnected nodes (neurons) organized in layers that process information collectively to solve complex problems.",
+      "metadata": {
+        "title": "Understanding Neural Networks",
+        "author": "ML Researchers",
+        "type": "article",
+        "tags": ["neural-networks", "deep-learning", "architecture"],
+        "date": "2024-02-05",
+        "url": "https://en.wikipedia.org/wiki/Neural_network_(machine_learning)"
+      }
+    },
+    {
+      "content": "Semantic search uses AI to understand the meaning of words and phrases rather than just matching keywords. It provides more relevant results by considering context, user intent, and relationships between concepts.",
+      "metadata": {
+        "title": "Semantic Search Technology",
+        "author": "Search Innovation Lab",
+        "type": "article",
+        "tags": ["semantic-search", "ai", "information-retrieval"],
+        "date": "2024-02-10",
+        "url": "https://en.wikipedia.org/wiki/Semantic_search"
+      }
+    },
+    {
+      "content": "Reinforcement learning is a machine learning paradigm where an agent learns to make decisions by interacting with an environment. The agent receives rewards or penalties for actions and learns to maximize cumulative reward over time.",
+      "metadata": {
+        "title": "Reinforcement Learning Explained",
+        "author": "AI Academy",
+        "type": "article",
+        "tags": ["reinforcement-learning", "machine-learning", "algorithms"],
+        "date": "2024-02-15",
+        "url": "https://en.wikipedia.org/wiki/Reinforcement_learning"
+      }
+    },
+    {
+      "content": "Agentic AI refers to systems that don't just respond to a single prompt but plan, use tools, and take multi-step actions toward a goal with limited supervision. Instead of one-shot generation, an agent can search, call APIs, write and run code, and revise its own plan when a step fails, closing the loop between reasoning and action.",
+      "metadata": {
+        "title": "The Rise of Agentic AI",
+        "author": "Agent Systems Team",
+        "type": "article",
+        "tags": ["agentic-ai", "ai-agents", "automation"],
+        "date": "2026-03-02",
+        "url": "https://arxiv.org/list/cs.AI/recent"
+      }
+    },
+    {
+      "content": "Multimodal AI models process and reason across more than one type of input at once, such as text, images, audio, and video, rather than handling each in isolation. This lets a single model caption an image, answer questions about a chart, or follow spoken instructions, and it's becoming the default architecture for general-purpose assistants.",
+      "metadata": {
+        "title": "Multimodal AI Models Explained",
+        "author": "Multimodal Research Team",
+        "type": "article",
+        "tags": ["multimodal", "computer-vision", "ai"],
+        "date": "2026-03-10",
+        "url": "https://news.mit.edu/topic/artificial-intelligence2"
+      }
+    },
+    {
+      "content": "AI safety and alignment research focuses on making sure increasingly capable systems behave as intended, remain controllable, and don't produce harmful or deceptive outputs as they scale. Techniques span reinforcement learning from human feedback, interpretability research into what models are actually doing internally, and red-teaming to find failure modes before deployment.",
+      "metadata": {
+        "title": "AI Safety and Alignment",
+        "author": "AI Safety Team",
+        "type": "article",
+        "tags": ["ai-safety", "alignment", "ethics"],
+        "date": "2026-03-18",
+        "url": "https://en.wikipedia.org/wiki/AI_safety"
+      }
+    },
+    {
+      "content": "Edge AI moves inference from the cloud onto the device itself — phones, cameras, wearables, and industrial sensors — cutting latency, working offline, and keeping sensitive data local. Smaller, more efficient models and dedicated on-device chips have made this practical for tasks that used to require a round trip to a server.",
+      "metadata": {
+        "title": "Edge AI: Intelligence at the Device",
+        "author": "Edge Computing Group",
+        "type": "article",
+        "tags": ["edge-computing", "on-device-ai", "iot"],
+        "date": "2026-04-01",
+        "url": "https://spectrum.ieee.org/artificial-intelligence"
+      }
+    },
+    {
+      "content": "Synthetic data is artificially generated rather than collected from real-world events, and it's increasingly used to train and evaluate models where real data is scarce, expensive, or sensitive. Done well, it can fill gaps in a dataset's coverage and protect privacy; done poorly, it can quietly bake in the generating model's own biases and blind spots.",
+      "metadata": {
+        "title": "Synthetic Data for Model Training",
+        "author": "Synthetic Data Team",
+        "type": "article",
+        "tags": ["synthetic-data", "data-generation", "privacy"],
+        "date": "2026-04-09",
+        "url": "https://en.wikipedia.org/wiki/Synthetic_data"
+      }
+    },
+    {
+      "content": "Humanoid robotics is being reshaped by advances in AI, as large models trained on language and vision give robots better perception, planning, and the ability to follow natural-language instructions instead of relying on rigid, pre-programmed routines. The hard problems are now less about raw actuation and more about grounding a model's understanding of the physical world.",
+      "metadata": {
+        "title": "Humanoid Robotics and AI",
+        "author": "Robotics Innovation Team",
+        "type": "article",
+        "tags": ["robotics", "humanoids", "embodied-ai"],
+        "date": "2026-04-17",
+        "url": "https://spectrum.ieee.org/robotics"
+      }
+    },
+    {
+      "content": "Quantum computing and machine learning intersect in a few promising ways: using quantum hardware to accelerate specific optimization and sampling problems inside ML pipelines, and using ML to help control and error-correct noisy quantum hardware itself. Practical quantum advantage for mainstream ML workloads is still early, but the research area is maturing quickly.",
+      "metadata": {
+        "title": "Quantum Computing Meets Machine Learning",
+        "author": "Quantum AI Lab",
+        "type": "article",
+        "tags": ["quantum-computing", "quantum-ml", "ai"],
+        "date": "2026-04-25",
+        "url": "https://en.wikipedia.org/wiki/Quantum_computing"
+      }
+    },
+    {
+      "content": "Artificial general intelligence (AGI) describes a hypothetical system with human-level ability to learn and reason across a broad range of tasks, rather than excelling narrowly at one. Progress toward it remains contested — some researchers see current large models as an early step, others argue genuine general intelligence requires architectures and capabilities that don't exist yet.",
+      "metadata": {
+        "title": "Toward Artificial General Intelligence",
+        "author": "AGI Research Group",
+        "type": "article",
+        "tags": ["agi", "agi-research", "ai"],
+        "date": "2026-05-03",
+        "url": "https://en.wikipedia.org/wiki/Artificial_general_intelligence"
+      }
+    },
+    {
+      "content": "Agentic workflows are quietly replacing single-shot prompting. The real unlock isn't a smarter model — it's giving that model tools, memory, and permission to try again when it's wrong.",
+      "metadata": {
+        "author": "Priya N.",
+        "role": "ML Engineer",
+        "type": "discussion",
+        "tags": ["agentic-ai", "hot-take"],
+        "date": "2026-06-02"
+      }
+    },
+    {
+      "content": "Everyone's chasing bigger context windows, but retrieval quality still matters more than window size for most production RAG systems. Garbage in, garbage out.",
+      "metadata": {
+        "author": "Marcus T.",
+        "role": "AI Founder",
+        "type": "discussion",
+        "tags": ["rag", "retrieval"],
+        "date": "2026-06-10"
+      }
+    },
+    {
+      "content": "Edge inference is finally good enough for real products. Shipping a 3B model on-device beats a 70B model behind a flaky API for most use cases I've seen this year.",
+      "metadata": {
+        "author": "Sofia R.",
+        "role": "Research Scientist",
+        "type": "discussion",
+        "tags": ["edge-computing", "on-device-ai"],
+        "date": "2026-06-18"
+      }
+    },
+    {
+      "content": "The synthetic data debate isn't 'real vs fake' anymore — it's about knowing exactly which distribution gaps you're patching, and validating that you didn't introduce new ones.",
+      "metadata": {
+        "author": "Devon K.",
+        "role": "Data Scientist",
+        "type": "discussion",
+        "tags": ["synthetic-data", "ml-training"],
+        "date": "2026-06-25"
+      }
+    },
+    {
+      "content": "Regulation is coming whether the industry likes it or not. The teams that build auditability in now will move faster later, not slower.",
+      "metadata": {
+        "author": "Amara O.",
+        "role": "AI Policy Analyst",
+        "type": "discussion",
+        "tags": ["ai-safety", "regulation"],
+        "date": "2026-07-04"
+      }
+    },
+    {
+      "content": "Humanoid robots are having their LLM moment — perception and planning finally talk to each other instead of being bolted together as separate systems.",
+      "metadata": {
+        "author": "Leo Zhang",
+        "role": "Robotics Lead",
+        "type": "discussion",
+        "tags": ["robotics", "embodied-ai"],
+        "date": "2026-07-12"
+      }
+    }
+  ]
+}

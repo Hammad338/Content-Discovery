@@ -15,6 +15,9 @@ export class UserEntity {
   @Column('varchar', { length: 255 })
   passwordHash: string;
 
+  @Column('varchar', { length: 20, default: 'user' })
+  role: 'user' | 'admin';
+
   @CreateDateColumn()
   createdAt: Date;
 }

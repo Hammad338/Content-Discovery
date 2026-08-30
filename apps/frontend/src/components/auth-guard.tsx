@@ -2,10 +2,16 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/context/auth.context';
 import styles from './auth-guard.module.css';
 
-export function AuthGuard({ children }: { children: React.ReactNode }) {
+interface AuthGuardProps {
+  children: React.ReactNode;
+  requireAdmin?: boolean;
+}
+
+export function AuthGuard({ children, requireAdmin = false }: AuthGuardProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -19,6 +25,18 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     return (
       <div className={styles.wrap}>
         <div className={styles.spinner} />
+      </div>
+    );
+  }
+
+  if (requireAdmin && user.role !== 'admin') {
+    return (
+      <div className={styles.wrap}>
+        <div className={styles.denied}>
+          <h1>Access denied</h1>
+          <p>This page is only available to admin accounts.</p>
+          <Link href="/">← Back to Feed</Link>
+        </div>
       </div>
     );
   }

@@ -7,6 +7,7 @@ import { Sidebar } from '@/components/sidebar';
 import { ComposeModal } from '@/components/compose-modal';
 import { categoryLabel } from '@/components/post-card';
 import { AuthGuard } from '@/components/auth-guard';
+import { useAuth } from '@/context/auth.context';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
@@ -28,6 +29,7 @@ export default function Home() {
 }
 
 function HomeContent() {
+  const { user } = useAuth();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -297,7 +299,7 @@ function HomeContent() {
           <div className={styles.footerCol}>
             <h4>Navigate</h4>
             <Link href="/">Home</Link>
-            <Link href="/admin">Admin Dashboard</Link>
+            {user?.role === 'admin' && <Link href="/admin">Admin Dashboard</Link>}
           </div>
 
           <div className={styles.footerCol}>

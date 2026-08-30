@@ -1,8 +1,10 @@
-import { Controller, Get, Put, Delete, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Put, Delete, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { DocumentEntity } from '../database/entities/document.entity';
+import { AdminGuard } from '../auth/admin.guard';
 
 @Controller('api/admin')
+@UseGuards(AdminGuard)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 

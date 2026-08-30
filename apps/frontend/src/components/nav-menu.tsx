@@ -70,9 +70,11 @@ export function NavMenu() {
           <Link href="/" className={styles.item} onClick={() => setOpen(false)}>
             Home
           </Link>
-          <Link href="/admin" className={styles.item} onClick={() => setOpen(false)}>
-            Admin Dashboard
-          </Link>
+          {user?.role === 'admin' && (
+            <Link href="/admin" className={styles.item} onClick={() => setOpen(false)}>
+              Admin Dashboard
+            </Link>
+          )}
           <div className={styles.divider} />
           <a
             href="mailto:Hammadalam3381@gmail.com"

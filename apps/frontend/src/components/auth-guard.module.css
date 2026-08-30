@@ -15,6 +15,31 @@
   animation: spin 0.7s linear infinite;
 }
 
+.denied {
+  text-align: center;
+  max-width: 340px;
+  padding: 32px;
+}
+
+.denied h1 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.denied p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  margin-bottom: 20px;
+}
+
+.denied a {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

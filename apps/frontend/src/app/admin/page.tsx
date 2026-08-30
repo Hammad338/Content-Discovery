@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { NavMenu } from '@/components/nav-menu';
 import { AuthGuard } from '@/components/auth-guard';
+import { useAuth } from '@/context/auth.context';
 import styles from './admin.module.css';
 
 interface Document {
@@ -28,13 +29,16 @@ interface Analytics {
 
 export default function AdminDashboard() {
   return (
-    <AuthGuard>
+    <AuthGuard requireAdmin>
       <AdminDashboardContent />
     </AuthGuard>
   );
 }
 
 function AdminDashboardContent() {
+  const { token } = useAuth();
+  const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+
   const [documents, setDocuments] = useState<Document[]>([]);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,10 +55,10 @@ function AdminDashboardContent() {
     try {
       setLoading(true);
       setError('');
-      
+
       const [docsResponse, analyticsResponse] = await Promise.all([
-        axios.get(`http://localhost:3001/api/admin/documents?page=${page}&limit=10`),
-        axios.get('http://localhost:3001/api/admin/analytics'),
+        axios.get(`http://localhost:3001/api/admin/documents?page=${page}&limit=10`, authHeaders),
+        axios.get('http://localhost:3001/api/admin/analytics', authHeaders),
       ]);
 
       if (docsResponse.data.success) {
@@ -80,6 +84,7 @@ function AdminDashboardContent() {
     try {
       const response = await axios.get(
         `http://localhost:3001/api/admin/search?q=${encodeURIComponent(searchQuery)}`,
+        authHeaders,
       );
 
       if (response.data.success) {
@@ -94,7 +99,7 @@ function AdminDashboardContent() {
     if (!confirm('Are you sure you want to delete this document?')) return;
 
     try {
-      const response = await axios.delete(`http://localhost:3001/api/admin/documents/${id}`);
+      const response = await axios.delete(`http://localhost:3001/api/admin/documents/${id}`, authHeaders);
       if (response.data.success) {
         setDocuments(documents.filter(doc => doc.id !== id));
       }
@@ -107,6 +112,8 @@ function AdminDashboardContent() {
     try {
       const response = await axios.post(
         `http://localhost:3001/api/admin/documents/${id}/toggle`,
+        {},
+        authHeaders,
       );
 
       if (response.data.success) {

@@ -8,10 +8,16 @@ import { UserEntity } from './entities/user.entity';
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-only-insecure-secret-change-me';
 const JWT_EXPIRES_IN = '7d';
 
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '')
+  .split(',')
+  .map(e => e.trim().toLowerCase())
+  .filter(Boolean);
+
 export interface PublicUser {
   id: string;
   name: string;
   email: string;
+  role: 'user' | 'admin';
   createdAt: Date;
 }
 
@@ -28,6 +34,12 @@ export class AuthService {
         'JWT_SECRET is not set — using an insecure dev default. Set JWT_SECRET in .env for production.',
       );
     }
+    if (ADMIN_EMAILS.length === 0) {
+      this.logger.warn(
+        'ADMIN_EMAILS is not set — no account will have admin access to the Admin Dashboard. ' +
+          'Set ADMIN_EMAILS (comma-separated) in .env.',
+      );
+    }
   }
 
   async signup(name: string, email: string, password: string): Promise<{ user: PublicUser; token: string }> {
@@ -39,8 +51,9 @@ export class AuthService {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
+    const role = this.resolveRole(normalizedEmail);
     const user = await this.usersRepository.save(
-      this.usersRepository.create({ name: name.trim(), email: normalizedEmail, passwordHash }),
+      this.usersRepository.create({ name: name.trim(), email: normalizedEmail, passwordHash, role }),
     );
 
     return { user: this.toPublicUser(user), token: this.signToken(user) };
@@ -52,6 +65,14 @@ export class AuthService {
 
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
       throw new UnauthorizedException('Invalid email or password');
+    }
+
+    // Re-resolve role on every login so adding an email to ADMIN_EMAILS
+    // promotes an existing account the next time they sign in.
+    const resolvedRole = this.resolveRole(normalizedEmail, user.role);
+    if (resolvedRole !== user.role) {
+      user.role = resolvedRole;
+      await this.usersRepository.save(user);
     }
 
     return { user: this.toPublicUser(user), token: this.signToken(user) };
@@ -73,11 +94,17 @@ export class AuthService {
     return this.toPublicUser(user);
   }
 
+  private resolveRole(email: string, currentRole: 'user' | 'admin' = 'user'): 'user' | 'admin' {
+    return ADMIN_EMAILS.includes(email) ? 'admin' : currentRole;
+  }
+
   private signToken(user: UserEntity): string {
-    return jwt.sign({ sub: user.id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    return jwt.sign({ sub: user.id, email: user.email, role: user.role }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES_IN,
+    });
   }
 
   private toPublicUser(user: UserEntity): PublicUser {
-    return { id: user.id, name: user.name, email: user.email, createdAt: user.createdAt };
+    return { id: user.id, name: user.name, email: user.email, role: user.role, createdAt: user.createdAt };
   }
 }

@@ -71,6 +71,8 @@ A full-stack application for intelligent content search powered by AI. Built wit
      logs a warning if this is left unset.
    - `CLAUDE_API_KEY` — optional, enables AI-generated answers (see
      [Claude API Integration](#-claude-api-integration))
+   - `ADMIN_EMAILS` — comma-separated emails that get the `admin` role
+     and can reach the Admin Dashboard (see [Roles](#roles))
    - `DB_USERNAME` / `DB_PASSWORD` / `DB_NAME` — match your local
      Postgres setup if it differs from the defaults
 
@@ -120,6 +122,21 @@ session on reload via `GET /api/auth/me`.
 
 There's no email verification or password reset flow — this is a demo
 auth system, not production-hardened.
+
+### Roles
+
+Every account has a `role` of `user` or `admin`. Only `admin` accounts
+can reach the Admin Dashboard — the link is hidden from the nav menu
+and footer for everyone else, and the backend enforces it too: every
+`/api/admin/*` route is behind an `AdminGuard` that checks the JWT's
+role server-side, so it can't be bypassed by calling the API directly.
+
+There's no in-app way to promote a user — it's controlled by the
+`ADMIN_EMAILS` env var (comma-separated). Any account whose email is
+in that list becomes `admin` on signup, or gets promoted automatically
+the next time it logs in if it already existed. Leaving `ADMIN_EMAILS`
+unset means no account has admin access, and the backend logs a
+warning on startup.
 
 ### Sign up
 ```bash
@@ -340,6 +357,7 @@ PORT=3001
 FRONTEND_URL=http://localhost:3000
 CLAUDE_API_KEY=your_key_here (optional)
 JWT_SECRET=your_long_random_string (required for secure auth)
+ADMIN_EMAILS=you@example.com (comma-separated, grants admin role)
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=your_postgres_user

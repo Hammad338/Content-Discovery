@@ -138,6 +138,27 @@ the next time it logs in if it already existed. Leaving `ADMIN_EMAILS`
 unset means no account has admin access, and the backend logs a
 warning on startup.
 
+### Welcome email
+
+Signing up sends a welcome email via Gmail SMTP (`nodemailer`). To
+enable it:
+
+1. Turn on 2-Step Verification on the Google account you want to send
+   from (required for App Passwords):
+   https://myaccount.google.com/security
+2. Generate an App Password at
+   https://myaccount.google.com/apppasswords
+3. Set in `apps/backend/.env`:
+   ```
+   SMTP_USER=your_gmail_address@gmail.com
+   SMTP_PASS=the_16_character_app_password
+   MAIL_FROM_NAME=AI Discovery
+   ```
+
+Without `SMTP_USER`/`SMTP_PASS` set, the backend doesn't fail signup —
+it just logs that it would have sent the email, so the app stays fully
+usable without email configured.
+
 ### Sign up
 ```bash
 POST http://localhost:3001/api/auth/signup
@@ -380,6 +401,55 @@ npm run build
 npm run start
 ```
 
+## 🐳 Docker
+
+The whole stack — Postgres, backend, frontend — runs via Docker Compose.
+No local Node or Postgres install needed.
+
+1. **Configure environment variables**
+   ```bash
+   cp apps/backend/.env.example apps/backend/.env
+   ```
+   Edit `apps/backend/.env` and set `JWT_SECRET`, `ADMIN_EMAILS`, and
+   optionally `CLAUDE_API_KEY` / `SMTP_USER` / `SMTP_PASS` — same as
+   the [local setup](#-installation). The `DB_*` values in that file
+   are ignored in Docker; Compose points the backend at the `postgres`
+   service instead.
+
+2. **Build and start everything**
+   ```bash
+   docker compose up --build
+   ```
+
+3. **Open the app**
+   - Frontend: http://localhost:3000
+   - Backend health: http://localhost:3001/health
+   - Postgres (if you want to connect a client): `localhost:5433`
+     (mapped to 5433 on the host so it doesn't clash with a local
+     Postgres install on the default 5432)
+
+4. **Load sample data** (same as local dev, backend port is published
+   to the host either way)
+   ```bash
+   curl -X POST http://localhost:3001/api/rag/ingest \
+     -H "Content-Type: application/json" \
+     -d @sample-data.json
+   ```
+
+Postgres data persists in a named volume (`postgres_data`) across
+`docker compose down` / `up`. To wipe it and start fresh:
+```bash
+docker compose down -v
+```
+
+Each service also builds standalone via its own `Dockerfile`
+(`apps/backend/Dockerfile`, `apps/frontend/Dockerfile`) if you want to
+build/run them individually instead of through Compose — build context
+must be the repo root since this is an npm workspaces monorepo, e.g.:
+```bash
+docker build -f apps/backend/Dockerfile -t ai-discovery-backend .
+```
+
 ## 🤝 Contributing
 
 Feel free to fork and extend this project! Some ideas:
@@ -389,7 +459,7 @@ Feel free to fork and extend this project! Some ideas:
 - Implement Redis caching
 - Add vector embeddings with Weaviate
 - Password reset / email verification for auth
-- Deploy with Docker
+- Multi-stage CI build + push of the Docker images to a registry
 
 ## 📝 License
 

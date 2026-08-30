@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { UserEntity } from './entities/user.entity';
+import { MailService } from '../mail/mail.service';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-only-insecure-secret-change-me';
 const JWT_EXPIRES_IN = '7d';
@@ -28,6 +29,7 @@ export class AuthService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
+    private readonly mailService: MailService,
   ) {
     if (!process.env.JWT_SECRET) {
       this.logger.warn(
@@ -55,6 +57,10 @@ export class AuthService {
     const user = await this.usersRepository.save(
       this.usersRepository.create({ name: name.trim(), email: normalizedEmail, passwordHash, role }),
     );
+
+    // Best-effort — sendWelcomeEmail handles and logs its own failures,
+    // so a broken mail provider never blocks signup.
+    await this.mailService.sendWelcomeEmail(user.email, user.name);
 
     return { user: this.toPublicUser(user), token: this.signToken(user) };
   }

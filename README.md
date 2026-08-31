@@ -370,6 +370,20 @@ npm run dev
 - Make sure you loaded the sample data first
 - Use the `/api/rag/stats` endpoint to check if documents are ingested
 
+### Docker: backend can't connect to the database
+This almost always means the backend container was started on its own
+(`docker run ai-discovery-backend`) instead of through Compose. The
+backend defaults to `DB_HOST=localhost`, which has nothing listening
+inside an isolated container — only `docker compose up` sets
+`DB_HOST=postgres` and starts a Postgres container for it to reach.
+
+Fix: stop the standalone container(s) and use Compose instead —
+```bash
+docker ps            # find the stray container(s)
+docker rm -f <id>     # remove them
+docker compose up --build
+```
+
 ## 🎓 Learning Resources
 
 - **NestJS**: https://docs.nestjs.com/

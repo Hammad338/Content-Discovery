@@ -1,7 +1,8 @@
-import { Controller, Get, Put, Delete, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Put, Delete, Post, Body, Param, Query, Req, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { DocumentEntity } from '../database/entities/document.entity';
 import { AdminGuard } from '../auth/admin.guard';
+import { PublicUser } from '../auth/auth.service';
 
 @Controller('api/admin')
 @UseGuards(AdminGuard)
@@ -95,6 +96,43 @@ export class AdminController {
     try {
       const tags = await this.adminService.getTagsStats();
       return { success: true, data: tags };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  @Get('users')
+  async getAllUsers() {
+    try {
+      const result = await this.adminService.getAllUsers();
+      return { success: true, data: result };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  @Put('users/:id/role')
+  async updateUserRole(
+    @Param('id') id: string,
+    @Body() body: { role: 'user' | 'admin' },
+    @Req() req: { user: PublicUser },
+  ) {
+    try {
+      if (body.role !== 'user' && body.role !== 'admin') {
+        return { success: false, error: "role must be 'user' or 'admin'" };
+      }
+      const user = await this.adminService.updateUserRole(id, body.role, req.user.id);
+      return { success: true, data: user };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  @Delete('users/:id')
+  async deleteUser(@Param('id') id: string, @Req() req: { user: PublicUser }) {
+    try {
+      const result = await this.adminService.deleteUser(id, req.user.id);
+      return { success: true, data: result };
     } catch (error: any) {
       return { success: false, error: error.message };
     }

@@ -1,7 +1,8 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DocumentEntity } from '../database/entities/document.entity';
+import { UserEntity } from '../auth/entities/user.entity';
 
 @Injectable()
 export class AdminService {
@@ -10,6 +11,8 @@ export class AdminService {
   constructor(
     @InjectRepository(DocumentEntity)
     private documentsRepository: Repository<DocumentEntity>,
+    @InjectRepository(UserEntity)
+    private usersRepository: Repository<UserEntity>,
   ) {}
 
   async getAllDocuments(page: number = 1, limit: number = 10) {
@@ -140,6 +143,62 @@ export class AdminService {
         .sort((a, b) => b.count - a.count);
     } catch (error) {
       this.logger.error('Error fetching tags:', error);
+      throw error;
+    }
+  }
+
+  async getAllUsers() {
+    try {
+      const users = await this.usersRepository.find({
+        select: ['id', 'name', 'email', 'role', 'createdAt'],
+        order: { createdAt: 'DESC' },
+      });
+      const admins = users.filter(u => u.role === 'admin').length;
+
+      return {
+        users,
+        total: users.length,
+        admins,
+      };
+    } catch (error) {
+      this.logger.error('Error fetching users:', error);
+      throw error;
+    }
+  }
+
+  async updateUserRole(id: string, role: 'user' | 'admin', requestingUserId: string) {
+    try {
+      if (id === requestingUserId) {
+        throw new BadRequestException('You cannot change your own role');
+      }
+
+      const user = await this.usersRepository.findOne({ where: { id } });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+
+      user.role = role;
+      await this.usersRepository.save(user);
+      return { id: user.id, name: user.name, email: user.email, role: user.role, createdAt: user.createdAt };
+    } catch (error) {
+      this.logger.error('Error updating user role:', error);
+      throw error;
+    }
+  }
+
+  async deleteUser(id: string, requestingUserId: string) {
+    try {
+      if (id === requestingUserId) {
+        throw new BadRequestException('You cannot delete your own account');
+      }
+
+      const result = await this.usersRepository.delete(id);
+      if (result.affected === 0) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+      return { success: true, message: 'User deleted successfully' };
+    } catch (error) {
+      this.logger.error('Error deleting user:', error);
       throw error;
     }
   }

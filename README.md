@@ -131,12 +131,20 @@ and footer for everyone else, and the backend enforces it too: every
 `/api/admin/*` route is behind an `AdminGuard` that checks the JWT's
 role server-side, so it can't be bypassed by calling the API directly.
 
-There's no in-app way to promote a user — it's controlled by the
-`ADMIN_EMAILS` env var (comma-separated). Any account whose email is
-in that list becomes `admin` on signup, or gets promoted automatically
+There's no in-app way to grant the *first* admin — that's what
+`ADMIN_EMAILS` (comma-separated) is for. Any account whose email is in
+that list becomes `admin` on signup, or gets promoted automatically
 the next time it logs in if it already existed. Leaving `ADMIN_EMAILS`
 unset means no account has admin access, and the backend logs a
 warning on startup.
+
+Once you have one admin account, the Admin Dashboard's **Users** tab
+lists everyone who has signed up (name, email, role, join date) and
+lets an admin promote/demote another account's role or delete it
+outright — all enforced server-side via the same `AdminGuard`. An
+admin can't change their own role or delete their own account through
+this UI (prevents accidentally locking yourself out); that has to go
+through `ADMIN_EMAILS` or the database directly.
 
 ### Welcome email
 
